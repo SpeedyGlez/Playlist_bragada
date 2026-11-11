@@ -1,0 +1,748 @@
+Código completo: Playlist Favoritas 🎧
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b0b10">
+<title>Mi Playlist | Música para cada momento</title>
+
+<style>
+:root {
+    --fondo: #0b0b10;
+    --panel: #15151e;
+    --morado: #b66cff;
+    --dorado: #f2c879;
+    --texto: #f8f7fc;
+    --gris: #a6a5b5;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--fondo);
+    color: var(--texto);
+    line-height: 1.6;
+}
+
+a { color: inherit; }
+
+nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(11, 11, 16, .92);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid #ffffff12;
+    padding: 17px 7%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.logo {
+    font-size: 23px;
+    font-weight: 900;
+    letter-spacing: -1px;
+}
+
+.logo span { color: var(--morado); }
+
+nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    list-style: none;
+}
+
+nav a {
+    text-decoration: none;
+    font-size: 14px;
+    color: #d7d5e2;
+    transition: color .2s;
+}
+
+nav a:hover { color: var(--dorado); }
+
+.hero {
+    min-height: 510px;
+    display: flex;
+    align-items: center;
+    padding: 80px 8%;
+    background:
+        radial-gradient(ellipse at 80% 20%, #7c3aed55, transparent 45%),
+        radial-gradient(ellipse at 10% 90%, #d4a44b25, transparent 40%),
+        linear-gradient(130deg, #171321, #0b0b10 75%);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-content {
+    max-width: 760px;
+    position: relative;
+    z-index: 1;
+}
+
+.eyebrow {
+    display: inline-block;
+    color: var(--dorado);
+    border: 1px solid #f2c87955;
+    background: #f2c8790d;
+    padding: 7px 14px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 22px;
+}
+
+.hero h1 {
+    font-size: clamp(42px, 7vw, 76px);
+    line-height: 1.06;
+    letter-spacing: -3px;
+    margin-bottom: 22px;
+}
+
+.hero h1 span {
+    background: linear-gradient(90deg, #d8a7ff, #f2c879);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.hero p {
+    max-width: 560px;
+    color: #c0bdce;
+    font-size: 17px;
+    margin-bottom: 30px;
+}
+
+.boton {
+    display: inline-block;
+    background: linear-gradient(100deg, #b66cff, #8e4be7);
+    color: white;
+    padding: 13px 23px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: transform .25s, box-shadow .25s;
+}
+
+.boton:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px #b66cff44;
+}
+
+.boton-secundario {
+    display: inline-block;
+    border: 1px solid #ffffff30;
+    padding: 12px 21px;
+    border-radius: 30px;
+    text-decoration: none;
+    margin-left: 9px;
+    font-size: 14px;
+}
+
+section { padding: 70px 7%; }
+
+.encabezado {
+    margin-bottom: 30px;
+}
+
+.encabezado small {
+    color: var(--morado);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: bold;
+    font-size: 11px;
+}
+
+.encabezado h2 {
+    font-size: clamp(27px, 4vw, 39px);
+    letter-spacing: -1px;
+    margin-top: 5px;
+}
+
+.encabezado p {
+    color: var(--gris);
+    margin-top: 6px;
+}
+
+.estadisticas {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: -35px;
+    position: relative;
+    z-index: 2;
+    padding: 0 7%;
+}
+
+.stat {
+    background: #181720;
+    border: 1px solid #ffffff10;
+    border-radius: 15px;
+    text-align: center;
+    padding: 20px 10px;
+}
+
+.stat strong {
+    display: block;
+    font-size: 27px;
+    color: var(--dorado);
+}
+
+.stat span {
+    color: var(--gris);
+    font-size: 12px;
+}
+
+.filtros {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+}
+
+.filtro {
+    cursor: pointer;
+    color: #d5d3e1;
+    border: 1px solid #ffffff20;
+    background: #15151e;
+    border-radius: 25px;
+    padding: 9px 17px;
+    font-size: 13px;
+    transition: .2s;
+}
+
+.filtro:hover,
+.filtro.activo {
+    color: #fff;
+    border-color: var(--morado);
+    background: #7c3aed35;
+}
+
+.busqueda {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--panel);
+    border: 1px solid #ffffff18;
+    border-radius: 13px;
+    padding: 0 16px;
+    margin-bottom: 30px;
+}
+
+.busqueda span { font-size: 20px; }
+
+.busqueda input {
+    width: 100%;
+    min-width: 0;
+    padding: 15px 0;
+    color: white;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 14px;
+}
+
+.busqueda input::placeholder { color: #858394; }
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.card {
+    background: var(--panel);
+    border: 1px solid #ffffff0e;
+    border-radius: 18px;
+    overflow: hidden;
+    transition: transform .3s, border-color .3s, box-shadow .3s;
+    min-width: 0;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+    border-color: #b66cff65;
+    box-shadow: 0 15px 40px #00000040;
+}
+
+.portada {
+    height: 205px;
+    position: relative;
+    overflow: hidden;
+    background: #282336;
+}
+
+.portada img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    transition: transform .5s;
+}
+
+.card:hover .portada img { transform: scale(1.06); }
+
+.genero {
+    position: absolute;
+    left: 13px;
+    top: 13px;
+    background: #0b0b10d9;
+    border: 1px solid #ffffff25;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    backdrop-filter: blur(8px);
+}
+
+.card-body { padding: 20px; }
+
+.card h3 {
+    font-size: 21px;
+    margin-bottom: 3px;
+}
+
+.descripcion {
+    color: var(--gris);
+    font-size: 13px;
+    margin-bottom: 18px;
+}
+
+.lista-canciones {
+    list-style: none;
+    border-top: 1px solid #ffffff12;
+}
+
+.lista-canciones li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 0;
+    border-bottom: 1px solid #ffffff0c;
+    font-size: 13px;
+}
+
+.lista-canciones li:last-child { border-bottom: none; }
+
+.lista-canciones a {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    color: var(--dorado);
+    background: #f2c87912;
+    border: 1px solid #f2c87930;
+    text-decoration: none;
+    font-size: 15px;
+    transition: .2s;
+}
+
+.lista-canciones a:hover {
+    background: var(--dorado);
+    color: #17120a;
+}
+
+.no-resultados {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--gris);
+    padding: 35px;
+    background: var(--panel);
+    border-radius: 15px;
+}
+
+.frase {
+    margin: 0 7% 70px;
+    padding: 40px 25px;
+    border-radius: 20px;
+    text-align: center;
+    background:
+        radial-gradient(ellipse at top right, #b66cff30, transparent 60%),
+        #17151f;
+    border: 1px solid #ffffff12;
+}
+
+.frase .nota { font-size: 32px; }
+
+.frase h2 {
+    font-size: clamp(22px, 4vw, 34px);
+    margin: 10px 0;
+}
+
+.frase p { color: var(--gris); }
+
+footer {
+    border-top: 1px solid #ffffff12;
+    text-align: center;
+    padding: 28px 15px;
+    color: var(--gris);
+    font-size: 12px;
+}
+
+footer strong { color: var(--morado); }
+
+@media (max-width: 900px) {
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .hero { min-height: 440px; }
+}
+
+@media (max-width: 600px) {
+    nav {
+        padding: 15px 5%;
+        justify-content: center;
+    }
+
+    nav ul {
+        justify-content: center;
+        gap: 14px;
+    }
+
+    nav a { font-size: 12px; }
+
+    .hero { padding: 65px 6%; }
+
+    .hero h1 { letter-spacing: -1.5px; }
+
+    .hero p { font-size: 15px; }
+
+    .boton-secundario {
+        margin: 12px 0 0;
+    }
+
+    section { padding: 55px 5%; }
+
+    .estadisticas {
+        padding: 0 5%;
+        gap: 8px;
+    }
+
+    .stat { padding: 14px 5px; }
+    .stat strong { font-size: 22px; }
+    .stat span { font-size: 10px; }
+
+    .grid { grid-template-columns: 1fr; gap: 18px; }
+
+    .portada { height: 225px; }
+
+    .frase { margin: 0 5% 50px; }
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+    <a class="logo" href="#" style="text-decoration:none">
+        🎧 Mi<span>Playlist</span>
+    </a>
+    <ul>
+        <li><a href="#inicio">Inicio</a></li>
+        <li><a href="#artistas">Artistas</a></li>
+        <li><a href="#canciones">Canciones</a></li>
+    </ul>
+</nav>
+
+<header class="hero" id="inicio">
+    <div class="hero-content">
+        <span class="eyebrow">✦ Mi música, mis momentos</span>
+        <h1>Mi mundo tiene<br>su propio <span>ritmo.</span></h1>
+        <p>
+            De los corridos tumbados al reguetón y el pop.
+            Una colección de artistas y canciones para cada
+            estado de ánimo. Sube el volumen y disfruta. 🔊
+        </p>
+        <a class="boton" href="#artistas">♫ Explorar artistas</a>
+        <a class="boton-secundario" href="#canciones">Ver canciones ↓</a>
+    </div>
+</header>
+
+<div class="estadisticas">
+    <div class="stat">
+        <strong>9</strong>
+        <span>Artistas</span>
+    </div>
+    <div class="stat">
+        <strong>8+</strong>
+        <span>Géneros y estilos</span>
+    </div>
+    <div class="stat">
+        <strong>18</strong>
+        <span>Canciones para descubrir</span>
+    </div>
+</div>
+
+<section id="artistas">
+    <div class="encabezado">
+        <small>Tu colección personal</small>
+        <h2>Artistas que suenan aquí ✨</h2>
+        <p>Desde los corridos que se cantan a todo volumen hasta los ritmos urbanos.</p>
+    </div>
+
+    <div class="filtros" id="filtros">
+        <button class="filtro activo" data-genero="todos">Todos</button>
+        <button class="filtro" data-genero="corridos">Corridos tumbados</button>
+        <button class="filtro" data-genero="regional">Regional mexicano</button>
+        <button class="filtro" data-genero="urbano">Reguetón y urbano</button>
+        <button class="filtro" data-genero="pop">Pop internacional</button>
+    </div>
+
+    <div class="busqueda">
+        <span>⌕</span>
+        <input id="buscar" type="search"
+               placeholder="Buscar artista, género o canción..."
+               aria-label="Buscar artista, género o canción">
+    </div>
+
+    <div class="grid" id="grid-artistas">
+
+        <!-- NATANAEL CANO -->
+        <article class="card" data-genero="corridos">
+            <div class="portada">
+                <img src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=900&q=85"
+                     alt="Cantante bajo luces de escenario" loading="lazy">
+                <span class="genero">🤠 Corridos tumbados</span>
+            </div>
+            <div class="card-body">
+                <h3>Natanael Cano</h3>
+                <p class="descripcion">El rey de los corridos tumbados.</p>
+                <ul class="lista-canciones">
+                    <li><span>1. Madonna</span><a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=Natanael+Cano+Madonna" aria-label="Buscar Madonna">▶</a></li>
+                    <li><span>2. Amor Tumbado</span><a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=Natanael+Cano+Amor+Tumbado" aria-label="Buscar Amor Tumbado">▶</a></li>
+                </ul>
+            </div>
+        </article>
+
+        <!-- MARCA REGISTRADA -->
+        <article class="card" data-genero="regional">
+            <div class="portada">
+                <img src="https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=900&q=85"
+                     alt="Concierto con luces y público" loading="lazy">
+                <span class="genero">🎸 Regional mexicano</span>
+            </div>
+            <div class="card-body">
+                <h3>Marca Registrada</h3>
+                <p class="descripcion">Sonido norteño con estilo propio.</p>
+                <ul class="lista-canciones">
+                    <li><span>1. El Rescate</span><a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=Grupo+Marca+Registrada+Junior+H+El+Rescate" aria-label="Buscar El Rescate">▶</a></li>
+                    <li><span>2. Di Que Sí</span><a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=Grupo+Marca+Registrada+Di+Que+Si" aria-label="Buscar Di Que Sí">▶</a></li>
+                </ul>
+            </div>
+        </article>
+
+        <!-- FUERZA REGIDA -->
+        <article class="card" data-genero="regional">
+            <div class="portada">
+                <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=900&q=85"
+                     alt="Luces de un concierto musical" loading="lazy">
+                <span class="genero">🔥 Regional mexicano</span>
+            </div>
+            <div class="card-body">
+                <h3>Fuerza Regida</h3>
+                <p class="descripcion">Corridos modernos para subir el ánimo.</p>
+                <ul class="lista-canciones">
+                    <li><span>1. TQM</span><a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=Fuerza+Regida+TQM" aria-label="Buscar TQM">▶</a></li>
+                    <li><span>2. Sabor Fresa</span><a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=Fuerza+Regida+Sabor+Fresa" aria-label="Buscar Sabor Fresa">▶</a></li>
+                </ul>
+            </div>
+        </article>
+
+        <!-- JUNIOR H -->
+        <article class="card" data-genero="corridos">
+            <div class="portada">
+                <img src="https://images.unsplash.com/photo-1510915361894-db8b60106cb1?auto=format&fit=crop&w=900&q=85"
+                     alt="Guitarra en un ambiente musical" loading="lazy">
+                <span class="genero">🌙 Corridos tumbados</span>
+            </div>
+            <div class="card-body">
+                <h3>Junior H</h3>
+                <p class="descripcion">Melodías melancólicas para escuchar de noche.</p>
+                <ul class="lista-canciones">
+                    <li><span>1. Y LLORO</span><a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=Junior+H+Y+LLORO" aria-label="Buscar Y LLORO">▶</a></li>
+                    <li><span>2. Mente Positiva</span><a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=Junior+H+Mente+Positiva" aria-label="Buscar Mente Positiva">▶</a></li>
+                </ul>
+            </div>
+        </article>
+
+        <!-- PESO PLUMA -->
+        <article class="card" data-genero="corridos">
+            <div class="portada">
+                <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=900&q=85"
+                     alt="Cantante actuando en un escenario" loading="lazy">
+                <span class="genero">🎤 Corridos tumbados</span>
+            </div>
+            <div class="card-body">
+                <h3>Peso Pluma</h3>
+                <p class="descripcion">Uno de los nombres más conocidos del género.</p>
+                <ul class="lista-canciones">
+                    <li><span>1. Ella Baila Sola</span><a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=Peso+Pluma+Eslabon+Armado+Ella+Baila+Sola" aria-label="Buscar Ella Baila Sola">▶</a></li>
+                    <li><span>2. LADY GAGA</span><a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=Peso+Pluma+Junior+H+Gabito+Ballesteros+Lady+Gaga" aria-label="Buscar LADY GAGA">▶</a></li>
+                </ul>
+            </div>
+        </article>
+
+        <!-- GRUPO FRONTERA -->
+        <article class="card" data-genero="regional">
+            <div class="portada">
+                <img src="https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=900&q=85"
+                     alt="Público disfrutando de un concierto" loading="lazy">
+                <span class="genero">🪗 Norteño y cumbia</span>
+            </div>
+            <div class="card-body">
+                <h3>Grupo Frontera</h3>
+                <p class="descripcion">Ritmos norteños con letras románticas.</p>
+                <ul class="lista-canciones">
+                    <li><span>1. No Se Va</span><a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=Grupo+Frontera+No+Se+Va" aria-label="Buscar No Se Va">▶</a></li>
+                    <li><span>2. un x100to</span><a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=Grupo+Frontera+Bad+Bunny+un+x100to" aria-label="Buscar un x100to">▶</a></li>
+                </ul>
+            </div>
+        </article>
+
+        <!-- BAD BUNNY -->
+        <article class="card" data-genero="urbano">
+            <div class="portada">
+                <img src="https://images.unsplash.com/photo-1459749411175-04bf5292ceea?auto=format&fit=crop&w=900&q=85"
+                     alt="Escenario de música en vivo" loading="lazy">
+                <span class="genero">🌴 Reguetón</span>
+            </div>
+            <div class="card-body">
+                <h3>Bad Bunny</h3>
+                <p class="descripcion">Reguetón y sonidos urbanos latinos.</p>
+                <ul class="lista-canciones">
+                    <li><span>1. Tití Me Preguntó</span><a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=Bad+Bunny+Titi+Me+Pregunto" aria-label="Buscar Tití Me Preguntó">▶</a></li>
+                    <li><span>2. Ojitos Lindos</span><a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=Bad+Bunny+Bomba+Estereo+Ojitos+Lindos" aria-label="Buscar Ojitos Lindos">▶</a></li>
+                </ul>
+            </div>
+        </article>
+
+        <!-- FEID -->
+        <article class="card" data-genero="urbano">
+            <div class="portada">
+                <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=900&q=85"
+                     alt="Fiesta con luces de colores" loading="lazy">
+                <span class="genero">💚 Urbano latino</span>
+            </div>
+            <div class="card-body">
+                <h3>Feid</h3>
+                <p class="descripcion">Ritmos frescos para cantar y bailar.</p>
+                <ul class="lista-canciones">
+                    <li><span>1. Luna</span><a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=Feid+ATL+Jacob+Luna" aria-label="Buscar Luna">▶</a></li>
+                    <li><span>2. Classy 101</span><a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=Feid+Young+Miko+Classy+101" aria-label="Buscar Classy 101">▶</a></li>
+                </ul>
+            </div>
+        </article>
+
+        <!-- THE WEEKND -->
+        <article class="card" data-genero="pop">
+            <div class="portada">
+                <img src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=900&q=85"
+                     alt="Artista iluminado en el escenario" loading="lazy">
+                <span class="genero">🌃 Pop internacional</span>
+            </div>
+            <div class="card-body">
+                <h3>The Weeknd</h3>
+                <p class="descripcion">Pop y R&amp;B para un ambiente nocturno.</p>
+                <ul class="lista-canciones">
+                    <li><span>1. Blinding Lights</span><a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=The+Weeknd+Blinding+Lights" aria-label="Buscar Blinding Lights">▶</a></li>
+                    <li><span>2. Starboy</span><a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=The+Weeknd+Daft+Punk+Starboy" aria-label="Buscar Starboy">▶</a></li>
+                </ul>
+            </div>
+        </article>
+
+    </div>
+</section>
+
+<section id="canciones" style="padding-top:0">
+    <div class="frase">
+        <div class="nota">🎶 ✨ 🎶</div>
+        <h2>Cada canción tiene su momento.</h2>
+        <p>Para manejar, salir con amigos, recordar a alguien o simplemente disfrutar.</p>
+    </div>
+</section>
+
+<footer>
+    <p>Hecho con ♡ y mucha música · <strong>Mi Playlist</strong> © 2026</p>
+    <p style="margin-top:5px">Los enlaces te llevan a búsquedas de canciones en YouTube.</p>
+</footer>
+
+<script>
+const filtros = document.querySelectorAll(".filtro");
+const tarjetas = document.querySelectorAll(".card");
+const buscar = document.getElementById("buscar");
+const grid = document.getElementById("grid-artistas");
+
+let generoActivo = "todos";
+
+function filtrarTarjetas() {
+    const texto = buscar.value
+        .toLocaleLowerCase("es")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+
+    let visibles = 0;
+
+    tarjetas.forEach(tarjeta => {
+        const genero = tarjeta.dataset.genero;
+        const contenido = tarjeta.textContent
+            .toLocaleLowerCase("es")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "");
+
+        const coincideGenero =
+            generoActivo === "todos" || genero === generoActivo;
+
+        const coincideTexto = contenido.includes(texto);
+        const mostrar = coincideGenero && coincideTexto;
+
+        tarjeta.hidden = !mostrar;
+
+        if (mostrar) visibles++;
+    });
+
+    let aviso = document.getElementById("sin-resultados");
+
+    if (!visibles) {
+        if (!aviso) {
+            aviso = document.createElement("p");
+            aviso.id = "sin-resultados";
+            aviso.className = "no-resultados";
+            aviso.textContent =
+                "No encontramos coincidencias. Prueba con otro nombre o género. 🎵";
+            grid.appendChild(aviso);
+        }
+    } else if (aviso) {
+        aviso.remove();
+    }
+}
+
+filtros.forEach(boton => {
+    boton.addEventListener("click", () => {
+        filtros.forEach(f => f.classList.remove("activo"));
+        boton.classList.add("activo");
+        generoActivo = boton.dataset.genero;
+        filtrarTarjetas();
+    });
+});
+
+buscar.addEventListener("input", filtrarTarjetas);
+</script>
+
+</body>
+</html>
